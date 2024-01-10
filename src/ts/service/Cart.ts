@@ -15,10 +15,11 @@ export default class Cart {
         }
 
         if (item instanceof Gadget) {
-            if ( this._items.some( elem => elem.id === item.id ) ) {
-                item.quantity += 1;
-            } else {
+            if ( !this._items.some( elem => elem.id === item.id ) ) {
                 this._items.push(item);
+            } else {
+                let index = this._items.findIndex( elem => elem.id === item.id );
+                this._items[index].quantity += 1;
             }
         }
     }
@@ -45,13 +46,13 @@ export default class Cart {
     increaseQuantity(id: number): number {
         let index = this.items.findIndex( item => item.id === id );
         if ( this.items[index] instanceof Gadget ) {
-            return this.items[index].quantity += 1;
+            return this._items[index].quantity += 1;
         }
-        return this.items[index].quantity;
+        return this._items[index].quantity;
     }
 
     decreaseQuantity(id: number): number | Buyable[] {
         let index = this.items.findIndex( item => item.id === id );
-        return this.items[index].quantity == 1 ? this._items.splice(index, 1) : this.items[index].quantity -= 1;
+        return this._items[index].quantity == 1 ? this.removeItem(id) : --this._items[index].quantity;
     }
 }
